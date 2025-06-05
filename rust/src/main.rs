@@ -56,7 +56,7 @@ fn check_port_available(port: u16) -> Result<(), String> {
         .map_err(|e| format!("port {} unavailable: {}", port, e))
 }
 
-fn check_backend_reachable(url: &str) -> Result<(), String> {
+fn checkBackendReachable(url: &str) -> Result<(), String> {
     let client = Client::builder()
         .timeout(Duration::from_secs(5))
         .build()
@@ -80,7 +80,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     check_port_available(cfg.proxy.port)?;
     check_port_available(cfg.analyzer.port)?;
 
-    if let Err(e) = check_backend_reachable(&cfg.proxy.backend_url) {
+    if let Err(e) = checkBackendReachable(&cfg.proxy.backend_url) {
         eprintln!("Warning: backend {} unreachable: {}", cfg.proxy.backend_url, e);
     }
 
