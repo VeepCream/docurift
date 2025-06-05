@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/tienanr/docurift/internal/analyzer"
 	"github.com/tienanr/docurift/internal/config"
@@ -57,6 +58,21 @@ func checkPortAvailable(port int, service string) error {
 		return fmt.Errorf("%s port %d is already in use: %w", service, port, err)
 	}
 	ln.Close()
+	return nil
+}
+
+// checkBackendReachable attempts to connect to the backend URL and returns an error if unreachable
+func checkBackendReachable(url string) error {
+	client := &http.Client{Timeout: 5 * time.Second}
+	req, err := http.NewRequest(http.MethodHead, url, nil)
+	if err != nil {
+		return err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
 	return nil
 }
 
@@ -124,6 +140,10 @@ func main() {
 	}
 
 	log.Printf("Using backend URL: %s", backendURLParsed.String())
+
+	if err := checkBackendReachable(cfg.Proxy.BackendURL); err != nil {
+		log.Printf("Warning: backend %s is unreachable: %v", cfg.Proxy.BackendURL, err)
+	}
 
 	fwd, err := forward.New(forward.PassHostHeader(true))
 	if err != nil {
