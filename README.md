@@ -47,6 +47,15 @@ docker pull ghcr.io/tienanr/docurift:latest
 docker run -p 9876:9876 -p 9877:9877 -v $(pwd)/config.yaml:/etc/docurift/config.yaml ghcr.io/tienanr/docurift:latest
 ```
 
+
+### Running via Rust
+
+An experimental Rust implementation is available in the `rust` directory. If you have Rust installed, build and run it with your configuration file:
+
+```bash
+cargo run --manifest-path rust/Cargo.toml -- --config config.yaml
+```
+
 See [docs/configuration.md](docs/configuration.md) for details about config file.
 
 ## Quick Start
